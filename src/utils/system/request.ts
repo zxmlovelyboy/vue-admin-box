@@ -58,4 +58,27 @@ function showError(error: any) {
   
 }
 
+
+var localStorageUtil = {
+  set(key:any, val:any, expire:any,) {
+      var exp = expire ? Date.now() + expire * 1000 * 60 : -1;
+      localStorage.setItem(key, JSON.stringify({ value: val, expire: exp }));
+      console.log('set ' + key + ':' + JSON.stringify({ value: val, expire: new Date(exp).toLocaleString() }));
+  },
+  get(key:any) {
+      var data = localStorage.getItem(key);
+      // console.log(data);
+      if (!data) return null;
+      var dataObj = JSON.parse(data);
+      if (dataObj.expire == -1)
+          return dataObj.value;
+      if (Date.now() >= dataObj.expire) {
+          localStorage.removeItem(key);
+          return null;
+      } else {
+          return dataObj.value;
+      }
+  }
+};
+
 export default service
